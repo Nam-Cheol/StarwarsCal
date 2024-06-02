@@ -21,7 +21,7 @@ public class StarwarsCalender extends JFrame{
 	
 	private void initData() {
 		
-		backgroundMap = new JLabel(new ImageIcon("image/test.png"));
+		backgroundMap = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("icon.png")));
 		
 		setTitle("임찬님, Starwars에 오신 걸 환영합니다.");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
