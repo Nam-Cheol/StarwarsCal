@@ -1,5 +1,6 @@
 package starwarsCalender;
 
+import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
@@ -9,16 +10,26 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 
 public class StarwarsCalender extends JFrame {
 
 	private JLabel backgroundMap;
-
 	private TrayHandler trayHandler;
 	
 	private LocalDate today;
-	public int index;
+	private int dayIndex;
 
+	// 패널 관리
+	private JPanel calendar;
+	private JPanel memo;
+	
+	// 패널 타이틀보드
+	private TitledBorder titleboBorder;
+	private String title = "Calendar";
+	
 	// 월을 그리는 라벨
 	private JLabel month;
 
@@ -53,17 +64,21 @@ public class StarwarsCalender extends JFrame {
 
 		backgroundMap = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("starwarsBackground.png")));
 
-		setTitle("임찬님, Starwars에 오신 걸 환영합니다.");
+//		setTitle("임찬님, Starwars에 오신 걸 환영합니다.");
 //        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setContentPane(backgroundMap);
 		setSize(1200, 800);
 		
 		today = LocalDate.now();
-		index = today.getMonthValue();
+		dayIndex = today.getMonthValue();
+		
+		calendar = new JPanel();
+		memo = new JPanel();
+		titleboBorder = new TitledBorder(new LineBorder(Color.yellow, 3), title);
 		
 		trayHandler = new TrayHandler(this); // 트레이 핸들러 초기화
-		month = new JLabel(monthImg[index-1]);
+		month = new JLabel(monthImg[dayIndex-1]);
 		beforeBtn = new JButton(new ImageIcon(getClass().getClassLoader().getResource("beforeBtn.png")));
 		afterBtn = new JButton(new ImageIcon(getClass().getClassLoader().getResource("afterBtn.png")));
 	}
@@ -82,11 +97,23 @@ public class StarwarsCalender extends JFrame {
 		beforeBtn.setLocation(50, 20);
 		beforeBtn.setContentAreaFilled(false);
 		add(beforeBtn);
-
 		afterBtn.setSize(45, 50);
 		afterBtn.setLocation(330, 20);
 		afterBtn.setContentAreaFilled(false);
 		add(afterBtn);
+		
+		calendar.setBackground(new Color(0,0,0,0));
+		calendar.setSize(300, 400);
+		calendar.setLocation(100, 100);
+		calendar.setBorder(titleboBorder);
+		add(calendar);
+		
+		memo.setBackground(new Color(0,0,0,0));
+		memo.setSize(300, 400);
+		memo.setLocation(500, 100);
+		title = "Memo";
+		memo.setBorder(titleboBorder);
+		add(memo);
 	}
 
 	private void addEventListener() {
@@ -100,9 +127,9 @@ public class StarwarsCalender extends JFrame {
 		beforeBtn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(index != 1) {
-					index -= 1;
-					month.setIcon(monthImg[index-1]);
+				if(dayIndex != 1) {
+					dayIndex -= 1;
+					month.setIcon(monthImg[dayIndex-1]);
 				}
 			}
 		});
@@ -110,9 +137,9 @@ public class StarwarsCalender extends JFrame {
 		afterBtn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(index != 12) {
-					index += 1;
-					month.setIcon(monthImg[index-1]);
+				if(dayIndex != 12) {
+					dayIndex += 1;
+					month.setIcon(monthImg[dayIndex-1]);
 				}
 			}
 		});
