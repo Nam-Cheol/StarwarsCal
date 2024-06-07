@@ -1,9 +1,12 @@
 package starwarsCalender;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -30,7 +33,6 @@ public class StarwarsCalender extends JFrame {
 
 	// 패널 관리
 	private JPanel calendar;
-//	MemoPanel memo;
 	List<MemoPanel> memos;
 
 	// 패널 타이틀보드
@@ -43,7 +45,7 @@ public class StarwarsCalender extends JFrame {
 	private JButton beforeBtn;
 	private JButton afterBtn;
 
-	private JButton dayBtn;
+	private List<JButton> dayBtns = new ArrayList<>();
 
 	// 월 정보에 대한 이미지
 	private ImageIcon jan = new ImageIcon(getClass().getClassLoader().getResource("Jan.png"));
@@ -82,7 +84,6 @@ public class StarwarsCalender extends JFrame {
 		dayIndex = today.getMonthValue();
 
 		calendar = new JPanel();
-//		memo = new MemoPanel();
 		titleboBorder = new TitledBorder(new LineBorder(Color.yellow, 3));
 
 		trayHandler = new TrayHandler(this); // 트레이 핸들러 초기화
@@ -117,11 +118,6 @@ public class StarwarsCalender extends JFrame {
 		calendar.setBorder(titleboBorder);
 		add(calendar);
 
-//		memo.setBackground(new Color(0, 0, 0, 0));
-//		memo.setSize(300, 550);
-//		memo.setLocation(860, 180);
-//		memo.setBorder(titleboBorder);
-//		add(memo);
 	}
 
 	private void addEventListener() {
@@ -138,9 +134,10 @@ public class StarwarsCalender extends JFrame {
 				if (dayIndex != 1) {
 					dayIndex -= 1;
 					month.setIcon(monthImg[dayIndex - 1]);
-					 for (MemoPanel memo : memos) {
-		                    remove(memo);
-		                }
+					for (MemoPanel memo : memos) {
+						remove(memo);
+					}
+					dayBtns.removeAll(dayBtns);
 					refreshCalendar();
 				}
 			}
@@ -152,106 +149,96 @@ public class StarwarsCalender extends JFrame {
 				if (dayIndex != 12) {
 					dayIndex += 1;
 					month.setIcon(monthImg[dayIndex - 1]);
-					 for (MemoPanel memo : memos) {
-		                    remove(memo);
-		                }
+					for (MemoPanel memo : memos) {
+						remove(memo);
+					}
+					dayBtns.removeAll(dayBtns);
 					refreshCalendar();
 				}
-			}
-		});
-
-		dayBtn.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.out.println("성공");
-				memos.get(Integer.parseInt(dayBtn.getText())).setBackground(new Color(0, 0, 0, 0));
-				memos.get(Integer.parseInt(dayBtn.getText())).setSize(300, 550);
-				memos.get(Integer.parseInt(dayBtn.getText())).setLocation(860, 180);
-				memos.get(Integer.parseInt(dayBtn.getText())).setBorder(titleboBorder);
-				add(memos.get(Integer.parseInt(dayBtn.getText())));
 			}
 		});
 
 	}
 
 	private void refreshCalendar() {
-	    memos = new ArrayList<>();
+		memos = new ArrayList<>();
 
-	    calendar.removeAll();
-	    calendar.setLayout(new GridLayout(0, 7, 10, 5));
+		calendar.removeAll();
+		calendar.setLayout(new GridLayout(0, 7, 10, 5));
 
-	    String[] daysOfWeek = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+		String[] daysOfWeek = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 
-	    for (String day : daysOfWeek) {
-	        JLabel dayLabel = new JLabel(day, JLabel.CENTER);
-	        dayLabel.setForeground(Color.yellow);
+		for (String day : daysOfWeek) {
+			JLabel dayLabel = new JLabel(day, JLabel.CENTER);
+			dayLabel.setForeground(Color.yellow);
 
-	        if (day.equals("Sun")) {
-	            dayLabel.setForeground(Color.PINK);
-	        } else if (day.equals("Sat")) {
-	            dayLabel.setForeground(Color.CYAN);
-	        }
+			if (day.equals("Sun")) {
+				dayLabel.setForeground(Color.PINK);
+			} else if (day.equals("Sat")) {
+				dayLabel.setForeground(Color.CYAN);
+			}
 
-	        dayLabel.setBorder(new LineBorder(Color.YELLOW, 1));
-	        calendar.add(dayLabel);
-	    }
+			dayLabel.setBorder(new LineBorder(Color.YELLOW, 1));
+			dayLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
+			calendar.add(dayLabel);
+		}
 
-	    LocalDate firstDayOfMonth = LocalDate.of(today.getYear(), dayIndex, 1);
-	    int startDayOfWeek = firstDayOfMonth.getDayOfWeek().getValue() % 7;
+		LocalDate firstDayOfMonth = LocalDate.of(today.getYear(), dayIndex, 1);
+		int startDayOfWeek = firstDayOfMonth.getDayOfWeek().getValue() % 7;
 
-	    for (int i = 0; i < startDayOfWeek; i++) {
-	        // 첫 날이 시작되는 날까지의 빈 칸 추가
-	        calendar.add(new JLabel(""));
-	    }
+		for (int i = 0; i < startDayOfWeek; i++) {
+			// 첫 날이 시작되는 날까지의 빈 칸 추가
+			calendar.add(new JLabel());
+		}
 
-	    YearMonth yearMonth = YearMonth.of(today.getYear(), dayIndex);
-	    int daysInMonth = yearMonth.lengthOfMonth();
+		YearMonth yearMonth = YearMonth.of(today.getYear(), dayIndex);
+		int daysInMonth = yearMonth.lengthOfMonth();
 
-	    for (day = 1; day <= daysInMonth; day++) {
-	        JLabel dayLabel = new JLabel();
-	        dayBtn = new JButton(day + "");
-	        dayBtn.setSize(50, 20);
-	        dayBtn.setLocation(2, 2);
-	        dayBtn.setBackground(new Color(163, 47, 47));
-	        dayBtn.setForeground(Color.yellow);
-	        dayLabel.add(dayBtn);
-	        dayLabel.setForeground(Color.yellow);
-	        dayLabel.setBorder(new LineBorder(Color.YELLOW, 1));
-	        calendar.add(dayLabel);
+		for (day = 1; day <= daysInMonth; day++) {
+			JLabel dayLabel = new JLabel();
+			JButton dayBtn = new JButton(day + "");
+			dayBtn.setSize(50, 20);
+			dayBtn.setLocation(2, 2);
+			dayBtn.setBackground(new Color(163, 47, 47));
+			dayBtn.setForeground(Color.yellow);
+			dayBtns.add(dayBtn);
+			dayLabel.add(dayBtn);
+			dayLabel.setForeground(Color.yellow);
+			dayLabel.setBorder(new LineBorder(Color.YELLOW, 1));
+			calendar.add(dayLabel);
 
-	        MemoPanel memoPanel = new MemoPanel(today.getYear(), dayIndex, day);
-	        memos.add(memoPanel);
-	        dayBtn.addMouseListener(new MouseAdapter() {
-	            @Override
-	            public void mouseClicked(MouseEvent e) {
-	                // 이전에 추가된 메모 패널을 제거
-	                for (MemoPanel memo : memos) {
-	                    remove(memo);
-	                    System.out.println("성공");
-	                }
-	                
-	                // TODO 관리할 수 있도록 dayBtn의 배열이 필요
-	                int memoIndex = Integer.parseInt(dayBtn.getText()) - 1; // 메모 인덱스 계산
-	                System.out.println(memoIndex);
-	                MemoPanel memoPanel = memos.get(memoIndex); // 해당 날짜의 MemoPanel 가져오기
-	                memoPanel.setOpaque(false); // MemoPanel의 배경을 투명하게 설정
-	                memoPanel.setSize(300, 550); // MemoPanel의 크기 설정
-	                memoPanel.setLocation(860, 180); // MemoPanel의 위치 설정
-	                memoPanel.setBorder(titleboBorder); // MemoPanel의 테두리 설정
-	                
-	                // MemoPanel을 프레임에 추가
-	                add(memoPanel); 
-	                
-	                // 프레임을 다시 그리도록 갱신
-	                revalidate(); 
-	                repaint(); 
-	            }
-	        });
-	    }
+			MemoPanel memoPanel = new MemoPanel(today.getYear(), dayIndex, day);
+			memos.add(memoPanel);
+			dayBtn.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					// 이전에 추가된 메모 패널을 제거
+					for (MemoPanel memo : memos) {
+						remove(memo);
+					}
 
-	    revalidate();
-	    repaint();
+					// TODO 관리할 수 있도록 dayBtn의 배열이 필요
+					int memoIndex = Integer.parseInt(dayBtn.getText()) - 1; // 메모 인덱스 계산
+					MemoPanel memoPanel = memos.get(memoIndex); // 해당 날짜의 MemoPanel 가져오기
+					memoPanel.setOpaque(false); // MemoPanel의 배경을 투명하게 설정
+					memoPanel.setSize(300, 550); // MemoPanel의 크기 설정
+					memoPanel.setLocation(860, 180); // MemoPanel의 위치 설정
+					memoPanel.setBorder(titleboBorder); // MemoPanel의 테두리 설정
+
+					// MemoPanel을 프레임에 추가
+					add(memoPanel);
+
+					// 프레임을 다시 그리도록 갱신
+					revalidate();
+					repaint();
+					System.out.println(dayBtns.size());
+				}
+			});
+		}
+		revalidate();
+		repaint();
 	}
+
 	public static void main(String[] args) {
 		if (!FileLockHandler.lockInstance()) {
 			JOptionPane.showMessageDialog(null, "이미 실행 중 입니다.");

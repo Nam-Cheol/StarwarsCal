@@ -5,6 +5,15 @@
     <artifactId>starwarsCalender</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <dependencies>
+        <!-- Gson 라이브러리 추가 -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.8</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <resources>
             <resource>

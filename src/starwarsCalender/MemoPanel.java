@@ -45,7 +45,7 @@ public class MemoPanel extends JPanel {
         scrollPane = new JScrollPane(memoListPanel);
         
         // 날짜를 표시할 라벨 초기화
-        dateLabel = new JLabel(year + "년 " + month + "월 " + day + "일"); // 예시로 "2024-07-01"을 설정
+        dateLabel = new JLabel(year + "년 " + month + "월 " + day + "일");
         today = year + "-" + month + "-" + day;
     }
 
@@ -60,10 +60,9 @@ public class MemoPanel extends JPanel {
         add(dateLabel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         
-        
         for (int hour = 0; hour < 24; hour++) {
             String time = String.format("%02d:00", hour);
-            MemoEntry memoEntry = new MemoEntry(time);
+            MemoEntry memoEntry = new MemoEntry(time, this);
             memoEntries.add(memoEntry);
             memoListPanel.add(memoEntry);
         }
@@ -71,5 +70,9 @@ public class MemoPanel extends JPanel {
 
     public List<MemoEntry> getMemoEntries() {
         return memoEntries;
+    }
+    
+    public String getToday() {
+    	return this.today;
     }
 }
