@@ -1,5 +1,6 @@
 package starwarsCalender;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -18,6 +19,7 @@ import javax.swing.JTextField;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -42,6 +44,7 @@ public class MemoEntry extends JPanel {
 		initData();
 		setInitLayout();
 		addEventListener();
+		loadData();
 	}
 
 	private void initData() {
@@ -112,69 +115,96 @@ public class MemoEntry extends JPanel {
 	}
 
 	public void saveData() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		if(checkFile(mContext.getToday() + ".json")) {
-			
-			try(BufferedReader br = new BufferedReader(new FileReader(mContext.getToday() + ".json"))) {
-				StringBuilder sb = new StringBuilder();
-				String line;
-				while((line = br.readLine()) != null) {
-					sb.append(line);
-				}
-				
-				JsonElement element = JsonParser.parseString(sb.toString());
-				JsonObject object = element.getAsJsonObject();
-				
-				String time = object.get("time").getAsString();
-				System.out.println("time : " + time);
-				
-				if(time.equals(this.time)) {
-					
-					// TODO 이 부분에서 time(key값)이 같으면 text 부분의 값을 변경
-					object.remove(time);
-					object.addProperty("text", memoField.getText());
-					
-					BufferedWriter bw = new BufferedWriter(new FileWriter(mContext.getToday() + ".json", true));
-					gson.toJson(object, bw);
-					bw.flush();
-					bw.close();
-				} else {
-					BufferedWriter bw = new BufferedWriter(new FileWriter(mContext.getToday() + ".json", true));
-					
-						Data data = new Data(time, memoField.getText());
-						bw.write(gson.toJson(data));
-						bw.flush();
-						bw.close();
-					
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-		} else {
-			try (BufferedWriter bw = new BufferedWriter(new FileWriter(mContext.getToday() + ".json", true))) {
-				Data data = new Data(time, memoField.getText());
-				bw.write(gson.toJson(data));
-				bw.flush();
-				bw.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+	    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	    String filePath = mContext.getToday() + ".json";
+
+	    JsonArray jsonArray;
+	    try {
+	        if (checkFile(filePath)) {
+	            // 파일이 존재할 경우, 파일에서 JsonArray를 읽어옴
+	            try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+	                StringBuilder sb = new StringBuilder();
+	                String line;
+	                while ((line = br.readLine()) != null) {
+	                    sb.append(line);
+	                }
+	                JsonElement element = JsonParser.parseString(sb.toString());
+	                jsonArray = element.getAsJsonArray();
+	            }
+	        } else {
+	            // 파일이 존재하지 않을 경우, 새로운 JsonArray 생성
+	            jsonArray = new JsonArray();
+	        }
+
+	        boolean timeExists = false;
+	        // 현재 시간 정보와 비교
+	        for (JsonElement jsonElement : jsonArray) {
+	            JsonObject object = jsonElement.getAsJsonObject();
+	            if (object.has("time") && object.get("time").getAsString().equals(this.time)) {
+	                // 시간이 일치하면 텍스트 업데이트
+	                object.addProperty("text", memoField.getText());
+	                timeExists = true;
+	                break;
+	            }
+	        }
+
+	        if (!timeExists) {
+	            // 시간이 일치하지 않으면 새로운 시간과 텍스트 추가
+	            JsonObject newObject = new JsonObject();
+	            newObject.addProperty("time", this.time);
+	            newObject.addProperty("text", memoField.getText());
+	            jsonArray.add(newObject);
+	        }
+
+	        // JsonArray를 파일에 기록
+	        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+	            gson.toJson(jsonArray, bw);
+	            bw.flush();
+	        }
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
 	}
 
+
+
 	public void loadData() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		try (BufferedReader br = new BufferedReader(new FileReader(mContext.getToday() + ".json"))) {
-			String line;
-			while((line = br.readLine()) != null) {
-				
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	    String filePath = mContext.getToday() + ".json";
+
+	    if (!checkFile(filePath)) {
+	        // 파일이 존재하지 않으면 메서드를 종료
+	        return;
+	    }
+
+	    try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+	        StringBuilder sb = new StringBuilder();
+	        String line;
+	        while ((line = br.readLine()) != null) {
+	            sb.append(line);
+	        }
+
+	        JsonElement element = JsonParser.parseString(sb.toString());
+	        if (element.isJsonArray()) {
+	            JsonArray jsonArray = element.getAsJsonArray();
+	            for (JsonElement jsonElement : jsonArray) {
+	                JsonObject object = jsonElement.getAsJsonObject();
+	                if (object.has("time") && object.get("time").getAsString().equals(this.time)) {
+	                    if (object.has("text")) {
+	                        memoField.setText(object.get("text").getAsString());
+	                        memoField.setEditable(false);
+	                        saveButton.setEnabled(false);
+	                        editButton.setEnabled(true);
+	                        break;
+	                    }
+	                }
+	            }
+	        }
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
 	}
+
 	
 	private boolean checkFile(String filePath) {
         File file = new File(filePath);

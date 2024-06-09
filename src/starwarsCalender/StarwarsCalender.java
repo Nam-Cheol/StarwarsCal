@@ -74,9 +74,9 @@ public class StarwarsCalender extends JFrame {
 
 		backgroundMap = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("starwarsBackground.png")));
 
-		setTitle("임찬님, Starwars에 오신 걸 환영합니다.");
-//        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle("임찬님, Starwars에 오신 걸 환영합니다. ver 1.0.0");
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setContentPane(backgroundMap);
 		setSize(1200, 800);
 
@@ -96,6 +96,7 @@ public class StarwarsCalender extends JFrame {
 		setLayout(null);
 		setResizable(false);
 		setLocationRelativeTo(null);
+		setIconImage(new ImageIcon(getClass().getClassLoader().getResource("icon.png")).getImage());
 		setVisible(true);
 
 		month.setSize(230, 100);
@@ -122,11 +123,11 @@ public class StarwarsCalender extends JFrame {
 
 	private void addEventListener() {
 		// 트레이 최소화
-//        addWindowListener(new WindowAdapter() {
-//            public void windowClosing(WindowEvent e) {
-//                trayHandler.minimizeToTray();
-//            }
-//        });
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                trayHandler.minimizeToTray();
+            }
+        });
 
 		beforeBtn.addMouseListener(new MouseAdapter() {
 			@Override
