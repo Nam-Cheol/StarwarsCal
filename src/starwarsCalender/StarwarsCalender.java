@@ -15,6 +15,7 @@ import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -36,8 +37,18 @@ public class StarwarsCalender extends JFrame {
 
 	// 패널 관리
 	private JPanel calendar;
+
 	private JPanel term;
-	List<MemoPanel> memos;
+
+	private JTextPane monthCalculate;
+	public int monthStudyTime = 0;
+	public int monthWorkTime = 0;
+	public int monthEmptyTime = 0;
+
+	private JTextPane weeklyCalculate;
+	public int weeklyStudyTime = 0;
+	public int weeklyWorkTime = 0;
+	public int weeklyEmptyTime = 0;
 
 	// 패널 타이틀보드
 	private TitledBorder titleboBorder;
@@ -50,6 +61,9 @@ public class StarwarsCalender extends JFrame {
 	private JButton afterBtn;
 
 	private List<JButton> dayBtns = new ArrayList<>();
+	private List<MemoPanel> memos;
+	private List<JList<String>> workJLists = new ArrayList<>();
+	private List<Vector<String>> workLists = new Vector<>();
 
 	// 월 정보에 대한 이미지
 	private ImageIcon jan = new ImageIcon(getClass().getClassLoader().getResource("Jan.png"));
@@ -78,9 +92,9 @@ public class StarwarsCalender extends JFrame {
 
 		backgroundMap = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("starwarsBackground.png")));
 
-		setTitle("임찬님, Starwars에 오신 걸 환영합니다. ver 1.0.0");
-//        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle("임찬님, Starwars에 오신 걸 환영합니다. ver 1.1.0");
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setContentPane(backgroundMap);
 		setSize(1200, 800);
 
@@ -123,24 +137,42 @@ public class StarwarsCalender extends JFrame {
 		calendar.setLocation(50, 180);
 		calendar.setBorder(titleboBorder);
 		add(calendar);
-		
-		term.setLayout(null);
-		term.setBackground(new Color(0,0,0,0));
+
+		term.setBackground(new Color(0, 0, 0, 0));
 		term.setBorder(titleboBorder);
-		term.setSize(400, 150);
-		term.setLocation(400,20);
-		JTextPane test = new JTextPane();
-		add(term);
+		term.setSize(250, 160);
+		term.setLocation(470, 10);
+		term.setLayout(new GridLayout(0, 1, 10, 5)); // 행별 레이아웃을 1열로 변경
+
+		monthCalculate = new JTextPane(); // 월별 행동을 기록할 JTextPane 생성
+		monthCalculate.setBorder(new TitledBorder(new LineBorder(Color.yellow, 2), "내가 이번 달에 뭘 했을까?"));
+		monthCalculate.setBackground(new Color(255, 255, 255, 50));
+		monthCalculate.setEnabled(false);
+		monthCalculate.setText("이번 달 공부한 시간은 [ " + monthStudyTime + " ] 시간입니다.");
+		monthCalculate.setText(monthCalculate.getText() + "\n이번 달 근무한 시간은 [ " + monthWorkTime + " ] 시간입니다.");
+		monthCalculate.setText(monthCalculate.getText() + "\n이번 달 놀았던 시간은 [ " + monthEmptyTime + " ] 시간입니다.");
+		term.add(monthCalculate); // term 패널에 월별 행동 텍스트 필드 추가
+
+		weeklyCalculate = new JTextPane(); // 주별 행동을 기록할 JTextPane 생성
+		weeklyCalculate.setBorder(new TitledBorder(new LineBorder(Color.yellow, 2), "내가 이번 주에 뭘 했을까?"));
+		weeklyCalculate.setBackground(new Color(255, 255, 255, 50));
+		weeklyCalculate.setEnabled(false);
+		weeklyCalculate.setText("이번 주 공부한 시간은 [ " + weeklyStudyTime + " ] 시간입니다.");
+		weeklyCalculate.setText(weeklyCalculate.getText() + "\n이번 주 근무한 시간은 [ " + weeklyWorkTime + " ] 시간입니다.");
+		weeklyCalculate.setText(weeklyCalculate.getText() + "\n이번 주 놀았던 시간은 [ " + weeklyEmptyTime + " ] 시간입니다.");
+		term.add(weeklyCalculate); // term 패널에 주별 행동 텍스트 필드 추가
+		term.setEnabled(false);
+//		add(term);
 
 	}
 
 	private void addEventListener() {
 		// 트레이 최소화
-//        addWindowListener(new WindowAdapter() {
-//            public void windowClosing(WindowEvent e) {
-//                trayHandler.minimizeToTray();
-//            }
-//        });
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                trayHandler.minimizeToTray();
+            }
+        });
 
 		beforeBtn.addMouseListener(new MouseAdapter() {
 			@Override
@@ -211,30 +243,29 @@ public class StarwarsCalender extends JFrame {
 		for (day = 1; day <= daysInMonth; day++) {
 			JPanel dayPanel = new JPanel();
 			dayPanel.setLayout(null);
-			
+
 			JButton dayBtn = new JButton(day + "");
 			dayBtn.setSize(50, 20);
 			dayBtn.setLocation(3, 5);
 			dayBtn.setBackground(new Color(163, 47, 47));
 			dayBtn.setForeground(Color.yellow);
-			
+
 			JButton workBtn = new JButton("L");
 			workBtn.setSize(50, 20);
 			workBtn.setLocation(3, 30);
 			workBtn.setBackground(new Color(163, 47, 47));
 			workBtn.setForeground(Color.yellow);
-			
+
 			JList<String> workJList = new JList<String>();
+			workJLists.add(workJList);
 			Vector<String> workList = new Vector<>();
-			workList.add("test1");
-			workList.add("test2");
+			workLists.add(workList);
 			workJList.setListData(workList);
-			workJList.setSize(35, 40);
-			workJList.setLocation(60, 5);
-			workJList.setEnabled(false);
-			workJList.setBackground(new Color(0,0,0,0));
-			workJList.setForeground(Color.white);
-			
+			workJList.setSize(30, 20);
+			workJList.setLocation(65, 5);
+			workJList.setBackground(new Color(0, 0, 0, 0));
+			workJList.setForeground(Color.black);
+
 			dayBtns.add(dayBtn);
 			dayPanel.setBackground(new Color(0, 0, 0, 0));
 			dayPanel.add(dayBtn);
@@ -270,11 +301,117 @@ public class StarwarsCalender extends JFrame {
 					repaint();
 				}
 			});
+
+			// workBtn 클릭 이벤트 핸들러
+			workBtn.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					// JDialog 생성
+					JDialog dialog = new JDialog(StarwarsCalender.this, "작업 선택", true);
+					dialog.setSize(250, 30);
+					dialog.setLayout(new GridLayout(1, 4));
+					dialog.setBackground(new Color(163, 47, 47));
+					dialog.setUndecorated(true);
+					dialog.setLocationRelativeTo(workBtn);
+
+					JButton EBtn = new JButton("E");
+					JButton B17Btn = new JButton("B17");
+					JButton CBtn = new JButton("C");
+					JButton cancelBtn = new JButton("삭제");
+
+					EBtn.setBackground(new Color(163, 47, 47));
+					EBtn.setForeground(Color.yellow);
+					B17Btn.setBackground(new Color(163, 47, 47));
+					B17Btn.setForeground(Color.yellow);
+					CBtn.setBackground(new Color(163, 47, 47));
+					CBtn.setForeground(Color.yellow);
+					cancelBtn.setBackground(new Color(163, 47, 47));
+					cancelBtn.setForeground(Color.yellow);
+
+					EBtn.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							workList.clear(); // 기존 리스트 지우기
+							workList.add("E");
+							workJList.setListData(workList);
+							workJList.setBackground(Color.lightGray); // JList의 백그라운드 색상을 검은색으로 변경
+							int memoIndex = Integer.parseInt(dayBtn.getText()) - 1;
+							for (MemoEntry entry : memos.get(memoIndex).getMemoEntries()) {
+								entry.shiftReset();
+							}
+							for (MemoEntry entry : memos.get(memoIndex).getMemoEntries()) {
+								entry.firstShift();
+							}
+							dialog.dispose(); // 작업이 선택된 후 다이얼로그 닫기
+						}
+					});
+
+					B17Btn.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							workList.clear(); // 기존 리스트 지우기
+							workList.add("B17");
+							workJList.setListData(workList);
+							workJList.setBackground(Color.lightGray); // JList의 백그라운드 색상을 검은색으로 변경
+							int memoIndex = Integer.parseInt(dayBtn.getText()) - 1;
+							for (MemoEntry entry : memos.get(memoIndex).getMemoEntries()) {
+								entry.shiftReset();
+							}
+							for (MemoEntry entry : memos.get(memoIndex).getMemoEntries()) {
+								entry.nightShift();
+							}
+							dialog.dispose(); // 작업이 선택된 후 다이얼로그 닫기
+						}
+					});
+
+					CBtn.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							workList.clear(); // 기존 리스트 지우기
+							workList.add("C");
+							workJList.setListData(workList);
+							workJList.setBackground(Color.lightGray); // JList의 백그라운드 색상을 검은색으로 변경
+							int memoIndex = Integer.parseInt(dayBtn.getText()) - 1;
+							for (MemoEntry entry : memos.get(memoIndex).getMemoEntries()) {
+								entry.shiftReset();
+							}
+							for (MemoEntry entry : memos.get(memoIndex).getMemoEntries()) {
+								entry.middleShift();
+							}
+							dialog.dispose(); // 작업이 선택된 후 다이얼로그 닫기
+						}
+					});
+
+					cancelBtn.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							workList.clear(); // 기존 리스트 지우기
+							workJList.setListData(workList);
+							workJList.setBackground(new Color(0, 0, 0, 0)); // JList의 백그라운드 색상을 투명으로 변경
+							int memoIndex = Integer.parseInt(dayBtn.getText()) - 1;
+							for (MemoEntry entry : memos.get(memoIndex).getMemoEntries()) {
+								entry.shiftReset();
+							}
+							dialog.dispose(); // 다이얼로그 닫기
+							// MemoPanel을 다시 그리도록 갱신
+							revalidate();
+							repaint();
+						}
+					});
+
+					dialog.add(EBtn);
+					dialog.add(B17Btn);
+					dialog.add(CBtn);
+					dialog.add(cancelBtn);
+
+					dialog.setVisible(true);
+				}
+			});
 		}
 		revalidate();
 		repaint();
 	}
-
+	
 	public static void main(String[] args) {
 		if (!FileLockHandler.lockInstance()) {
 			JOptionPane.showMessageDialog(null, "이미 실행 중 입니다.");

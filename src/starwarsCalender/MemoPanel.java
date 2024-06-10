@@ -51,7 +51,6 @@ public class MemoPanel extends JPanel {
 
     private void setInitLayout() {
         memoListPanel.setOpaque(false);
-        scrollPane.setOpaque(false);
         
         // BorderLayout.NORTH에 날짜 라벨 추가
         dateLabel.setFont(new Font("SansSerif", Font.BOLD, 16)); // 폰트 설정
@@ -60,6 +59,7 @@ public class MemoPanel extends JPanel {
         add(dateLabel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         
+        scrollPane.setOpaque(false);
         for (int hour = 0; hour < 24; hour++) {
             String time = String.format("%02d:00", hour);
             MemoEntry memoEntry = new MemoEntry(time, this);

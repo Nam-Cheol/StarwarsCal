@@ -1,10 +1,11 @@
 package starwarsCalender;
 
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -57,7 +58,6 @@ public class MemoEntry extends JPanel {
 
 		saveButton = new JButton("저장");
 		editButton = new JButton("수정");
-//		System.out.println(time);
 	}
 
 	private void setInitLayout() {
@@ -74,6 +74,19 @@ public class MemoEntry extends JPanel {
 	}
 
 	private void addEventListener() {
+		
+		memoField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					memoField.setEditable(false);
+					saveButton.setEnabled(false);
+					editButton.setEnabled(true);
+					saveData();
+				}
+			}
+		});
+		
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -191,6 +204,11 @@ public class MemoEntry extends JPanel {
 	                JsonObject object = jsonElement.getAsJsonObject();
 	                if (object.has("time") && object.get("time").getAsString().equals(this.time)) {
 	                    if (object.has("text")) {
+	                    	
+	                    	if(object.get("text").getAsString().equals("")) {
+	                    		break;
+	                    	}
+	                    	
 	                        memoField.setText(object.get("text").getAsString());
 	                        memoField.setEditable(false);
 	                        saveButton.setEnabled(false);
@@ -204,8 +222,54 @@ public class MemoEntry extends JPanel {
 	        e.printStackTrace();
 	    }
 	}
-
 	
+	public void firstShift() {
+        // time 변수가 "08:00"부터 "17:00" 사이인 경우 근무로 설정
+        if (time.compareTo("08:00") >= 0 && time.compareTo("17:00") <= 0) {
+            memoField.setText("근무"); // 근무로 텍스트 설정
+            memoField.setEditable(false); // 수정 불가능하도록 설정
+            saveButton.setEnabled(false); // 저장 버튼 비활성화
+            editButton.setEnabled(true); // 수정 버튼 비활성화
+            saveData(); // 데이터 저장
+        }
+    }
+	
+	public void middleShift() {
+        // time 변수가 "11:00"부터 "20:00" 사이인 경우 근무로 설정
+        if (time.compareTo("11:00") >= 0 && time.compareTo("20:00") <= 0) {
+            memoField.setText("근무"); // 근무로 텍스트 설정
+            memoField.setEditable(false); // 수정 불가능하도록 설정
+            saveButton.setEnabled(false); // 저장 버튼 비활성화
+            editButton.setEnabled(true); // 수정 버튼 비활성화
+            saveData(); // 데이터 저장
+        }
+    }
+	
+	public void nightShift() {
+        // time 변수가 "17:00"부터 "01:00" 사이인 경우 근무로 설정
+        if (time.compareTo("17:00") >= 0 && time.compareTo("24:00") <= 0) {
+            memoField.setText("근무"); // 근무로 텍스트 설정
+            memoField.setEditable(false); // 수정 불가능하도록 설정
+            saveButton.setEnabled(false); // 저장 버튼 비활성화
+            editButton.setEnabled(true); // 수정 버튼 비활성화
+            saveData(); // 데이터 저장
+        }
+    }
+	
+	public void shiftReset() {
+		if(memoField.getText().equals("근무")) {
+			memoField.setText(null);
+			memoField.setEditable(true);
+            saveButton.setEnabled(true);
+            editButton.setEnabled(false);
+            saveData();
+		}
+	}
+
+	public JTextField getMemoField() {
+		return memoField;
+	}
+
 	private boolean checkFile(String filePath) {
         File file = new File(filePath);
         return file.exists();
