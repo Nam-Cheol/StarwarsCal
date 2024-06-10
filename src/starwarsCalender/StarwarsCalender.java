@@ -11,13 +11,16 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
@@ -33,6 +36,7 @@ public class StarwarsCalender extends JFrame {
 
 	// 패널 관리
 	private JPanel calendar;
+	private JPanel term;
 	List<MemoPanel> memos;
 
 	// 패널 타이틀보드
@@ -75,8 +79,8 @@ public class StarwarsCalender extends JFrame {
 		backgroundMap = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("starwarsBackground.png")));
 
 		setTitle("임찬님, Starwars에 오신 걸 환영합니다. ver 1.0.0");
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setContentPane(backgroundMap);
 		setSize(1200, 800);
 
@@ -84,6 +88,7 @@ public class StarwarsCalender extends JFrame {
 		dayIndex = today.getMonthValue();
 
 		calendar = new JPanel();
+		term = new JPanel();
 		titleboBorder = new TitledBorder(new LineBorder(Color.yellow, 3));
 
 		trayHandler = new TrayHandler(this); // 트레이 핸들러 초기화
@@ -118,16 +123,24 @@ public class StarwarsCalender extends JFrame {
 		calendar.setLocation(50, 180);
 		calendar.setBorder(titleboBorder);
 		add(calendar);
+		
+		term.setLayout(null);
+		term.setBackground(new Color(0,0,0,0));
+		term.setBorder(titleboBorder);
+		term.setSize(400, 150);
+		term.setLocation(400,20);
+		JTextPane test = new JTextPane();
+		add(term);
 
 	}
 
 	private void addEventListener() {
 		// 트레이 최소화
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                trayHandler.minimizeToTray();
-            }
-        });
+//        addWindowListener(new WindowAdapter() {
+//            public void windowClosing(WindowEvent e) {
+//                trayHandler.minimizeToTray();
+//            }
+//        });
 
 		beforeBtn.addMouseListener(new MouseAdapter() {
 			@Override
@@ -196,17 +209,40 @@ public class StarwarsCalender extends JFrame {
 		int daysInMonth = yearMonth.lengthOfMonth();
 
 		for (day = 1; day <= daysInMonth; day++) {
-			JLabel dayLabel = new JLabel();
+			JPanel dayPanel = new JPanel();
+			dayPanel.setLayout(null);
+			
 			JButton dayBtn = new JButton(day + "");
 			dayBtn.setSize(50, 20);
-			dayBtn.setLocation(2, 2);
+			dayBtn.setLocation(3, 5);
 			dayBtn.setBackground(new Color(163, 47, 47));
 			dayBtn.setForeground(Color.yellow);
+			
+			JButton workBtn = new JButton("L");
+			workBtn.setSize(50, 20);
+			workBtn.setLocation(3, 30);
+			workBtn.setBackground(new Color(163, 47, 47));
+			workBtn.setForeground(Color.yellow);
+			
+			JList<String> workJList = new JList<String>();
+			Vector<String> workList = new Vector<>();
+			workList.add("test1");
+			workList.add("test2");
+			workJList.setListData(workList);
+			workJList.setSize(35, 40);
+			workJList.setLocation(60, 5);
+			workJList.setEnabled(false);
+			workJList.setBackground(new Color(0,0,0,0));
+			workJList.setForeground(Color.white);
+			
 			dayBtns.add(dayBtn);
-			dayLabel.add(dayBtn);
-			dayLabel.setForeground(Color.yellow);
-			dayLabel.setBorder(new LineBorder(Color.YELLOW, 1));
-			calendar.add(dayLabel);
+			dayPanel.setBackground(new Color(0, 0, 0, 0));
+			dayPanel.add(dayBtn);
+			dayPanel.add(workBtn);
+			dayPanel.add(workJList);
+			dayPanel.setForeground(Color.yellow);
+			dayPanel.setBorder(new LineBorder(Color.YELLOW, 1));
+			calendar.add(dayPanel);
 
 			MemoPanel memoPanel = new MemoPanel(today.getYear(), dayIndex, day);
 			memos.add(memoPanel);
@@ -232,7 +268,6 @@ public class StarwarsCalender extends JFrame {
 					// 프레임을 다시 그리도록 갱신
 					revalidate();
 					repaint();
-					System.out.println(dayBtns.size());
 				}
 			});
 		}
