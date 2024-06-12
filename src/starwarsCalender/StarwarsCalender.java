@@ -92,9 +92,8 @@ public class StarwarsCalender extends JFrame {
 
 		backgroundMap = new JLabel(new ImageIcon(getClass().getClassLoader().getResource("starwarsBackground.png")));
 
-		setTitle("임찬님, Starwars에 오신 걸 환영합니다. ver 1.1.0");
+		setTitle("**님, Starwars에 오신 걸 환영합니다. ver 1.1.0");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setContentPane(backgroundMap);
 		setSize(1200, 800);
 
@@ -143,25 +142,27 @@ public class StarwarsCalender extends JFrame {
 		term.setSize(250, 160);
 		term.setLocation(470, 10);
 		term.setLayout(new GridLayout(0, 1, 10, 5)); // 행별 레이아웃을 1열로 변경
-
-		monthCalculate = new JTextPane(); // 월별 행동을 기록할 JTextPane 생성
-		monthCalculate.setBorder(new TitledBorder(new LineBorder(Color.yellow, 2), "내가 이번 달에 뭘 했을까?"));
-		monthCalculate.setBackground(new Color(255, 255, 255, 50));
-		monthCalculate.setEnabled(false);
-		monthCalculate.setText("이번 달 공부한 시간은 [ " + monthStudyTime + " ] 시간입니다.");
-		monthCalculate.setText(monthCalculate.getText() + "\n이번 달 근무한 시간은 [ " + monthWorkTime + " ] 시간입니다.");
-		monthCalculate.setText(monthCalculate.getText() + "\n이번 달 놀았던 시간은 [ " + monthEmptyTime + " ] 시간입니다.");
-		term.add(monthCalculate); // term 패널에 월별 행동 텍스트 필드 추가
-
-		weeklyCalculate = new JTextPane(); // 주별 행동을 기록할 JTextPane 생성
-		weeklyCalculate.setBorder(new TitledBorder(new LineBorder(Color.yellow, 2), "내가 이번 주에 뭘 했을까?"));
-		weeklyCalculate.setBackground(new Color(255, 255, 255, 50));
-		weeklyCalculate.setEnabled(false);
-		weeklyCalculate.setText("이번 주 공부한 시간은 [ " + weeklyStudyTime + " ] 시간입니다.");
-		weeklyCalculate.setText(weeklyCalculate.getText() + "\n이번 주 근무한 시간은 [ " + weeklyWorkTime + " ] 시간입니다.");
-		weeklyCalculate.setText(weeklyCalculate.getText() + "\n이번 주 놀았던 시간은 [ " + weeklyEmptyTime + " ] 시간입니다.");
-		term.add(weeklyCalculate); // term 패널에 주별 행동 텍스트 필드 추가
-		term.setEnabled(false);
+		
+		
+		// TODO 미완 기능
+//		monthCalculate = new JTextPane(); // 월별 행동을 기록할 JTextPane 생성
+//		monthCalculate.setBorder(new TitledBorder(new LineBorder(Color.yellow, 2), "내가 이번 달에 뭘 했을까?"));
+//		monthCalculate.setBackground(new Color(255, 255, 255, 50));
+//		monthCalculate.setEnabled(false);
+//		monthCalculate.setText("이번 달 공부한 시간은 [ " + monthStudyTime + " ] 시간입니다.");
+//		monthCalculate.setText(monthCalculate.getText() + "\n이번 달 근무한 시간은 [ " + monthWorkTime + " ] 시간입니다.");
+//		monthCalculate.setText(monthCalculate.getText() + "\n이번 달 놀았던 시간은 [ " + monthEmptyTime + " ] 시간입니다.");
+//		term.add(monthCalculate); // term 패널에 월별 행동 텍스트 필드 추가
+//
+//		weeklyCalculate = new JTextPane(); // 주별 행동을 기록할 JTextPane 생성
+//		weeklyCalculate.setBorder(new TitledBorder(new LineBorder(Color.yellow, 2), "내가 이번 주에 뭘 했을까?"));
+//		weeklyCalculate.setBackground(new Color(255, 255, 255, 50));
+//		weeklyCalculate.setEnabled(false);
+//		weeklyCalculate.setText("이번 주 공부한 시간은 [ " + weeklyStudyTime + " ] 시간입니다.");
+//		weeklyCalculate.setText(weeklyCalculate.getText() + "\n이번 주 근무한 시간은 [ " + weeklyWorkTime + " ] 시간입니다.");
+//		weeklyCalculate.setText(weeklyCalculate.getText() + "\n이번 주 놀았던 시간은 [ " + weeklyEmptyTime + " ] 시간입니다.");
+//		term.add(weeklyCalculate); // term 패널에 주별 행동 텍스트 필드 추가
+//		term.setEnabled(false);
 //		add(term);
 
 	}
@@ -307,7 +308,7 @@ public class StarwarsCalender extends JFrame {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					// JDialog 생성
-					JDialog dialog = new JDialog(StarwarsCalender.this, "작업 선택", true);
+					JDialog dialog = new JDialog(StarwarsCalender.this, "작업선택", true);
 					dialog.setSize(250, 30);
 					dialog.setLayout(new GridLayout(1, 4));
 					dialog.setBackground(new Color(163, 47, 47));
